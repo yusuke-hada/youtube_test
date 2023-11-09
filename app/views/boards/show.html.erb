@@ -2,6 +2,22 @@
 
 <%= render @board %>
 
+<!-- YouTubeカラムの始まり -->
+<div class="col-md-8 justify-content-center">
+  <!-- ここからはYouTube動画のリンクを取得する部分 -->
+  <% video_id = extract_youtube_video_id(@post.link) %>
+  
+  <!-- リンクをクリックすると新しいウィンドウまたはタブで開かれるリンクを作成 -->
+  <%= link_to @post.link, target: "_blank" do %>
+    <!-- YouTube動画のサムネイルと情報を表示する部分 -->
+    <%= youtube_thumbnail(video_id, size: '1280x720', style: 'width: 80%; height: auto;') %>
+  <% end %>
+  
+  <!-- 見出しを表示 -->
+  <h1><%= @title %></h1>
+</div>
+<!-- YouTubeカラムの終わり -->
+
 <div>
   <%= link_to "Edit this board", edit_board_path(@board) %> |
   <%= link_to "Back to boards", boards_path %>

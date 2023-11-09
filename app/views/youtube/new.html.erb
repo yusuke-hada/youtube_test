@@ -1,0 +1,15 @@
+<!-- app/views/youtube/new.html.erb -->
+
+<h1>YouTube Video Information</h1>
+
+<%= form_with url: show_youtube_path, method: :get, local: true do |form| %>
+  <div class="field">
+    <%= form.label :url, "Video URL" %>
+    <%= form.text_field :url, required: true %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit "Get Video Info" %>
+  </div>
+<% end %>
+
