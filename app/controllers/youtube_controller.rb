@@ -15,43 +15,28 @@ class YoutubeController < ApplicationController
       video = response.items.first
   
       if video
+        channel_id = video.snippet.channel_id
+        channel_response = youtube_api_service.list_channels('statistics', id: channel_id)
+        channel = channel_response.items.first
+        
         @video_info = {
           title: video.snippet.title,
           description: video.snippet.description,
           view_count: video.statistics.view_count
         }
+        if channel
+          @video_info[:channel_subscribers] = channel.statistics.subscriber_count
+        else
+          flash[:error] = 'Channel not found.'
+          redirect_to new_youtube_path and return
+        end
       else
-        flash[:error] = 'Video not found.'
-        redirect_to new_youtube_path and return
-      end
+      flash[:error] = 'Video not found.'
+      redirect_to new_youtube_path and return
+    end
     rescue Google::Apis::Error => e
       flash[:error] = e.message
       redirect_to new_youtube_path
-    end
-  end
-
-  def get_video_info
-    youtube_api_service = Google::Apis::YoutubeV3::YouTubeService.new
-    youtube_api_service.key = Rails.application.credentials.YOUTUBE_API_KEY
-
-    begin
-      video_id = extract_video_id(params[:url]) # URLからvideo_idを抽出するメソッド
-      part = 'snippet,contentDetails,statistics' # 取得したい情報の種類
-      options = { id: video_id, part: part }
-      response = youtube_api_service.list_videos(part, options)
-      video = response.items.first
-
-      if video
-        render json: {
-          title: video.snippet.title,
-          description: video.snippet.description,
-          view_count: video.statistics.view_count
-        }
-      else
-        render json: { error: 'Video not found.' }, status: :not_found
-      end
-    rescue Google::Apis::Error => e
-      render json: { error: e.message }, status: :bad_request
     end
   end
 

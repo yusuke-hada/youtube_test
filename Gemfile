@@ -72,3 +72,4 @@ group :test do
 end
 
 gem 'google-api-client', '~> 0.11'
+gem 'pry-rails'
